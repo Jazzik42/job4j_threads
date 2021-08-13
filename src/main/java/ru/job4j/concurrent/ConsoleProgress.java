@@ -4,9 +4,9 @@ public class ConsoleProgress implements Runnable {
 
     @Override
     public void run() {
-        String [] process = new String[] {"-", "\\", "|", "/"};
+        String[] process = new String[]{"-", "\\", "|", "/"};
         int count = 0;
-        while(!Thread.currentThread().isInterrupted()) {
+        while (!Thread.currentThread().isInterrupted()) {
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
