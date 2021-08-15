@@ -13,7 +13,7 @@ public class ConsoleProgress implements Runnable {
               e.printStackTrace();
                 Thread.currentThread().interrupt();
             }
-            if (count > process.length) {
+            if (count >= process.length) {
                 count = 0;
             }
             System.out.print("\r Loading: " + process[count]);
