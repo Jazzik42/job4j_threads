@@ -9,16 +9,19 @@ import java.net.URL;
 public class WgetNew implements Runnable {
     private final String url;
     private final int speed;
+    private final String fileName;
 
-    public WgetNew(String url, int speed) {
-        this.url = url;
-        this.speed = speed;
+    public WgetNew(String[] args) {
+        String[] arguments = validateArgs(args);
+        this.url = arguments[0];
+        this.speed = Integer.parseInt(arguments[1]);
+        this.fileName = arguments[2];
     }
 
     @Override
     public void run() {
         try (BufferedInputStream io = new BufferedInputStream(new URL(url).openStream());
-             FileOutputStream out = new FileOutputStream("newFile.xml")) {
+             FileOutputStream out = new FileOutputStream(fileName)) {
             byte[] dataBuffer = new byte[1024];
             int byteRead;
             long startTime = System.nanoTime();
@@ -40,10 +43,17 @@ public class WgetNew implements Runnable {
         }
     }
 
+    private String[] validateArgs(String[] args) {
+        if (!args[0].startsWith("https://")
+                || !args[1].matches("\\d+")
+                || !args[2].endsWith(".xml")) {
+            throw new IllegalArgumentException();
+        }
+        return args;
+    }
+
     public static void main(String[] args) throws InterruptedException {
-        String url = args[0];
-        int speed = Integer.parseInt(args[1]);
-        Thread wget = new Thread(new WgetNew(url, speed));
+        Thread wget = new Thread(new WgetNew(args));
         wget.start();
         wget.join();
     }
