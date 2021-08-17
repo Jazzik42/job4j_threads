@@ -1,9 +1,6 @@
 package ru.job4j.ref;
 
-
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -21,7 +18,10 @@ public class UserCache {
     }
 
     public List<User> findAll() {
-        User[] list = (User[]) users.values().toArray();
-        return List.of(list);
+        List<User> findUsers = new ArrayList<>();
+        for (User user : users.values()) {
+            findUsers.add(User.of(user.getName()));
+        }
+        return findUsers;
     }
 }
