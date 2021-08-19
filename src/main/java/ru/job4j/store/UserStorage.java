@@ -1,8 +1,5 @@
 package ru.job4j.store;
 
-import net.jcip.annotations.ThreadSafe;
-
-@ThreadSafe
 public interface UserStorage {
 
     boolean add(User user);

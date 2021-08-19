@@ -6,13 +6,9 @@ public class User {
     private final int id;
     private final int amount;
 
-    private User(int id, int amount) {
+    public User(int id, int amount) {
         this.id = id;
         this.amount = amount;
-    }
-
-    public static User of(int id, int amount) {
-        return new User(id, amount);
     }
 
     public int getId() {
