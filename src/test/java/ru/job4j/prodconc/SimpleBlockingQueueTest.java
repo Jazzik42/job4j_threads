@@ -3,6 +3,14 @@ package ru.job4j.prodconc;
 import org.junit.Test;
 import ru.job4j.concurrent.prodconc.SimpleBlockingQueue;
 
+import java.util.Arrays;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.IntStream;
+
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+
+
 import static org.junit.Assert.assertNotNull;
 
 public class SimpleBlockingQueueTest {
@@ -12,20 +20,12 @@ public class SimpleBlockingQueueTest {
         SimpleBlockingQueue<Integer> queue = new SimpleBlockingQueue<>();
         Thread producer1 = new Thread(
                 () -> {
-                    try {
-                        queue.offer(1);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                    queue.offer(1);
                 }
         );
         Thread producer2 = new Thread(
                 () -> {
-                    try {
-                        queue.offer(2);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                    queue.offer(2);
                 }
         );
         Thread consumer = new Thread(
@@ -51,13 +51,9 @@ public class SimpleBlockingQueueTest {
         SimpleBlockingQueue<Integer> queue = new SimpleBlockingQueue<>();
         Thread producer1 = new Thread(
                 () -> {
-                    try {
-                        for (int i = 1; i <= 11; i++) {
-                            queue.offer(i);
-                            System.out.println(i);
-                        }
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                    for (int i = 1; i <= 11; i++) {
+                        queue.offer(i);
+                        System.out.println(i);
                     }
                 }
         );
@@ -76,5 +72,33 @@ public class SimpleBlockingQueueTest {
         consumer.start();
         producer1.join();
         consumer.join();
+    }
+
+    @Test
+    public void test() throws InterruptedException {
+        final CopyOnWriteArrayList<Integer> buffer = new CopyOnWriteArrayList<>();
+        final SimpleBlockingQueue<Integer> queue = new SimpleBlockingQueue<>();
+        Thread producer = new Thread(
+                () -> IntStream.range(0, 5).forEach(
+                            queue::offer)
+        );
+        producer.start();
+        Thread consumer = new Thread(
+                () -> {
+                    while (!queue.isEmpty() || !Thread.currentThread().isInterrupted()) {
+                        try {
+                            buffer.add(queue.poll());
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                            Thread.currentThread().interrupt();
+                        }
+                    }
+                }
+        );
+        consumer.start();
+        producer.join();
+        consumer.interrupt();
+        consumer.join();
+        assertThat(buffer, is(Arrays.asList(0, 1, 2, 3, 4)));
     }
 }
