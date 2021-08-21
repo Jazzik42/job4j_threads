@@ -19,23 +19,14 @@ public class SimpleBlockingQueueTest {
     public void whenPollAndOfferMultithreading() throws InterruptedException {
         SimpleBlockingQueue<Integer> queue = new SimpleBlockingQueue<>();
         Thread producer1 = new Thread(
-                () -> {
-                    queue.offer(1);
-                }
+                () -> queue.offer(1)
+
         );
         Thread producer2 = new Thread(
-                () -> {
-                    queue.offer(2);
-                }
+                () -> queue.offer(2)
         );
         Thread consumer = new Thread(
-                () -> {
-                    try {
-                        queue.poll();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
+                () -> queue.poll()
         );
         producer1.start();
         producer2.start();
@@ -59,12 +50,8 @@ public class SimpleBlockingQueueTest {
         );
         Thread consumer = new Thread(
                 () -> {
-                    try {
-                        for (int i = 1; i <= 11; i++) {
-                            System.out.println("Return" + queue.poll());
-                        }
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                    for (int i = 1; i <= 11; i++) {
+                        System.out.println("Return" + queue.poll());
                     }
                 }
         );
@@ -80,18 +67,13 @@ public class SimpleBlockingQueueTest {
         final SimpleBlockingQueue<Integer> queue = new SimpleBlockingQueue<>();
         Thread producer = new Thread(
                 () -> IntStream.range(0, 5).forEach(
-                            queue::offer)
+                        queue::offer)
         );
         producer.start();
         Thread consumer = new Thread(
                 () -> {
                     while (!queue.isEmpty() || !Thread.currentThread().isInterrupted()) {
-                        try {
-                            buffer.add(queue.poll());
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                            Thread.currentThread().interrupt();
-                        }
+                        buffer.add(queue.poll());
                     }
                 }
         );
