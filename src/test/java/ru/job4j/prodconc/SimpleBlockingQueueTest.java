@@ -65,7 +65,7 @@ public class SimpleBlockingQueueTest {
                 () -> {
                     try {
                         for (int i = 1; i <= 11; i++) {
-                            System.out.println("return" + queue.poll());
+                            System.out.println("Return" + queue.poll());
                         }
                     } catch (InterruptedException e) {
                         e.printStackTrace();
