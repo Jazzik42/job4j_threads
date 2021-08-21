@@ -12,23 +12,35 @@ public class SimpleBlockingQueue<T> {
     private Queue<T> queue = new LinkedList<>();
     private volatile int count = 0;
 
-    public synchronized void offer(T value) throws InterruptedException {
+    public synchronized void offer(T value) {
         while (count >= 10) {
-            this.wait();
+            try {
+                this.wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
         queue.offer(value);
         count++;
         this.notify();
     }
 
-    public synchronized T poll() throws InterruptedException {
+    public synchronized T poll() {
         while (count < 1) {
-            this.wait();
+            try {
+                this.wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
         count--;
         T rsl = queue.poll();
         this.notify();
         return rsl;
+    }
+
+    public boolean isEmpty() {
+        return queue.isEmpty();
     }
 }
 
