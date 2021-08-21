@@ -4,19 +4,18 @@ import org.junit.Test;
 import ru.job4j.concurrent.prodconc.SimpleBlockingQueue;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
-
-import static org.junit.Assert.assertNotNull;
-
 public class SimpleBlockingQueueTest {
 
     @Test
-    public void whenPollAndOfferMultithreading() throws InterruptedException {
-        SimpleBlockingQueue<Integer> queue = new SimpleBlockingQueue<>();
+    public void whenPollAndOfferMultithreading() {
+        final CopyOnWriteArrayList<Integer> buffer = new CopyOnWriteArrayList<>();
+        final SimpleBlockingQueue<Integer> queue = new SimpleBlockingQueue<>();
         Thread producer1 = new Thread(
                 () -> {
                     try {
@@ -38,7 +37,7 @@ public class SimpleBlockingQueueTest {
         Thread consumer = new Thread(
                 () -> {
                     try {
-                        queue.poll();
+                        buffer.add(queue.poll());
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -47,22 +46,25 @@ public class SimpleBlockingQueueTest {
         producer1.start();
         producer2.start();
         consumer.start();
-        producer1.join();
-        producer2.join();
-        consumer.join();
-        assertNotNull(queue.poll());
+        try {
+            producer1.join();
+            producer2.join();
+            consumer.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        assertThat(buffer, is(List.of(1)));
     }
 
-
     @Test
-    public void whenAddFullCapacity() throws InterruptedException {
-        SimpleBlockingQueue<Integer> queue = new SimpleBlockingQueue<>();
+    public void whenAddFullCapacity() {
+        final CopyOnWriteArrayList<Integer> buffer = new CopyOnWriteArrayList<>();
+        final SimpleBlockingQueue<Integer> queue = new SimpleBlockingQueue<>();
         Thread producer1 = new Thread(
                 () -> {
                     try {
                         for (int i = 1; i <= 11; i++) {
                             queue.offer(i);
-                            System.out.println(i);
                         }
                     } catch (InterruptedException e) {
                         e.printStackTrace();
@@ -73,7 +75,7 @@ public class SimpleBlockingQueueTest {
                 () -> {
                     try {
                         for (int i = 1; i <= 11; i++) {
-                            System.out.println("Return" + queue.poll());
+                            buffer.add(queue.poll());
                         }
                     } catch (InterruptedException e) {
                         e.printStackTrace();
@@ -82,12 +84,18 @@ public class SimpleBlockingQueueTest {
         );
         producer1.start();
         consumer.start();
-        producer1.join();
-        consumer.join();
+        try {
+            producer1.join();
+            consumer.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        assertThat(buffer, is(
+                List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)));
     }
 
     @Test
-    public void test() throws InterruptedException {
+    public void test() {
         final CopyOnWriteArrayList<Integer> buffer = new CopyOnWriteArrayList<>();
         final SimpleBlockingQueue<Integer> queue = new SimpleBlockingQueue<>();
         Thread producer = new Thread(
@@ -114,9 +122,13 @@ public class SimpleBlockingQueueTest {
                 }
         );
         consumer.start();
-        producer.join();
-        consumer.interrupt();
-        consumer.join();
+        try {
+            producer.join();
+            consumer.interrupt();
+            consumer.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         assertThat(buffer, is(Arrays.asList(0, 1, 2, 3, 4)));
     }
 }
