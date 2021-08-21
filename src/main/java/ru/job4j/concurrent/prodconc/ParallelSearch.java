@@ -1,6 +1,4 @@
-package ru.job4j.prodconc;
-
-import ru.job4j.concurrent.prodconc.SimpleBlockingQueue;
+package ru.job4j.concurrent.prodconc;
 
 public class ParallelSearch {
     public static void main(String[] args) {
