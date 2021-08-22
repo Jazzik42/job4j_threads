@@ -15,7 +15,7 @@ public class SimpleBlockingQueueTest {
     @Test
     public void whenPollAndOfferMultithreading() {
         final CopyOnWriteArrayList<Integer> buffer = new CopyOnWriteArrayList<>();
-        final SimpleBlockingQueue<Integer> queue = new SimpleBlockingQueue<>();
+        final SimpleBlockingQueue<Integer> queue = new SimpleBlockingQueue<>(10);
         Thread producer1 = new Thread(
                 () -> {
                     try {
@@ -59,7 +59,7 @@ public class SimpleBlockingQueueTest {
     @Test
     public void whenAddFullCapacity() {
         final CopyOnWriteArrayList<Integer> buffer = new CopyOnWriteArrayList<>();
-        final SimpleBlockingQueue<Integer> queue = new SimpleBlockingQueue<>();
+        final SimpleBlockingQueue<Integer> queue = new SimpleBlockingQueue<>(10);
         Thread producer1 = new Thread(
                 () -> {
                     try {
@@ -97,7 +97,7 @@ public class SimpleBlockingQueueTest {
     @Test
     public void test() {
         final CopyOnWriteArrayList<Integer> buffer = new CopyOnWriteArrayList<>();
-        final SimpleBlockingQueue<Integer> queue = new SimpleBlockingQueue<>();
+        final SimpleBlockingQueue<Integer> queue = new SimpleBlockingQueue<>(10);
         Thread producer = new Thread(
                 () -> {
                     try {
@@ -125,6 +125,7 @@ public class SimpleBlockingQueueTest {
         consumer.start();
         try {
             producer.join();
+
             consumer.interrupt();
             consumer.join();
         } catch (InterruptedException e) {

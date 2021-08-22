@@ -10,22 +10,24 @@ import java.util.Queue;
 public class SimpleBlockingQueue<T> {
     @GuardedBy("this")
     private Queue<T> queue = new LinkedList<>();
-    private volatile int count = 0;
+    private int initialCapacity;
+
+    public SimpleBlockingQueue(int initialCapacity) {
+        this.initialCapacity = initialCapacity;
+    }
 
     public synchronized void offer(T value) throws InterruptedException {
-        while (count >= 10) {
+        while (queue.size() >= initialCapacity) {
             this.wait();
         }
         queue.offer(value);
-        count++;
         this.notify();
     }
 
     public synchronized T poll() throws InterruptedException {
-        while (count < 1) {
+        while (queue.isEmpty()) {
             this.wait();
         }
-        count--;
         T rsl = queue.poll();
         this.notify();
         return rsl;
