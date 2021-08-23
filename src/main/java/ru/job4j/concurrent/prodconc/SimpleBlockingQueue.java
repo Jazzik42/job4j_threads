@@ -10,7 +10,7 @@ import java.util.Queue;
 public class SimpleBlockingQueue<T> {
     @GuardedBy("this")
     private Queue<T> queue = new LinkedList<>();
-    private int initialCapacity;
+    private final int initialCapacity;
 
     public SimpleBlockingQueue(int initialCapacity) {
         this.initialCapacity = initialCapacity;
@@ -18,18 +18,22 @@ public class SimpleBlockingQueue<T> {
 
     public synchronized void offer(T value) throws InterruptedException {
         while (queue.size() >= initialCapacity) {
-            this.wait();
+            wait();
         }
+        System.out.println("offer 1");
+        notifyAll();
         queue.offer(value);
-        this.notify();
+        System.out.println("offer 2");
     }
 
     public synchronized T poll() throws InterruptedException {
         while (queue.isEmpty()) {
-            this.wait();
+            System.out.println("pool 1");
+            wait();
+            System.out.println("pool 2");
         }
         T rsl = queue.poll();
-        this.notify();
+        notifyAll();
         return rsl;
     }
 
