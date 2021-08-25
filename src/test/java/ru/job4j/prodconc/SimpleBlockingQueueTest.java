@@ -28,7 +28,7 @@ public class SimpleBlockingQueueTest {
         Thread producer2 = new Thread(
                 () -> {
                     try {
-                        queue.offer(3);
+                        queue.offer(1);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
