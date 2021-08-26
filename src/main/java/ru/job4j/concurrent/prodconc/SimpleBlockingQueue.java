@@ -20,17 +20,13 @@ public class SimpleBlockingQueue<T> {
         while (queue.size() >= initialCapacity) {
             wait();
         }
-        System.out.println("offer 1");
         notifyAll();
         queue.offer(value);
-        System.out.println("offer 2");
     }
 
     public synchronized T poll() throws InterruptedException {
         while (queue.isEmpty()) {
-            System.out.println("pool 1");
             wait();
-            System.out.println("pool 2");
         }
         T rsl = queue.poll();
         notifyAll();
