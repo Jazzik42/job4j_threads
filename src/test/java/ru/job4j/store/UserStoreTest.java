@@ -12,16 +12,10 @@ public class UserStoreTest {
     public void whenAddAndGet() throws InterruptedException {
         UserStore userStore = new UserStore();
         Thread thread1 = new Thread(
-                () -> {
-                    User user1 = new User(1, 100);
-                    userStore.add(user1);
-                }
+                () -> userStore.add(new User(1, 100))
         );
         Thread thread2 = new Thread(
-                () -> {
-                    User user1 = new User(2, 200);
-                    userStore.add(user1);
-                }
+                () -> userStore.add(new User(2, 200))
         );
         thread1.start();
         thread2.start();
